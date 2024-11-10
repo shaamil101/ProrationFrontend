@@ -17,8 +17,9 @@ function App() {
       averageAmount: '',
       allocatedAmount: '',
   }]);
-  const [showOutput, setShowOutput] = useState(false); // State to control output visibility
+  const [showOutput, setShowOutput] = useState(false); 
 
+  //When the user clicks the + Add Investor button, a new investor is added to the list of investors
   const addInvestor = () => {
     setShowOutput(false); 
     const newInvestor = {
@@ -31,10 +32,12 @@ function App() {
     setInvestors([...investors, newInvestor]);
   }
 
+  //When the user types in the Allocation input box, the value is stored in the state
   const handleInputChange = (event) => {
     setAlloc(event.target.value);
   }
 
+  //When the user clicks the - button, the investor is removed from the list of investors and then resubmits the form
   const removeInvestor = (id) => {
     setInvestors(investors.filter((investor) => investor.id !== id));
     if (investors.length > 0) {
@@ -42,12 +45,14 @@ function App() {
     }
   }
 
+  //When the user types in the input boxes for the investor, the value is stored in the state
   const handleInvestorChange = (id, field, value) => {
     setInvestors(
       investors.map(investor => 
         investor.id === id ? { ...investor, [field]: value } : investor));
   }
   
+  //When the user clicks the Calculate button, the form data is sent to the API and the response is displayed
   const handleSubmit = async () => {
     const data = {
       allocationAmount: alloc,
@@ -59,20 +64,22 @@ function App() {
     }
     console.log('Send', data)
 
+    //Send the data to the API
     try {
       const response = await axios.post('https://proration-api-ccbe1a010de1.herokuapp.com/api/prorate', data);
       console.log('Response', response.data);
       const updatedInvestors = response.data.map((investorData, index) => ({
-        ...investors[index], // Preserve original id and other fields
-        allocatedAmount: investorData.allocatedAmount // Update with new allocated amount
+        ...investors[index], 
+        allocatedAmount: investorData.allocatedAmount 
       }));
       setInvestors(updatedInvestors);
-      setShowOutput(true); // Show the output div after calculation
+      setShowOutput(true); 
     } catch (error) {
       console.error('Error', error);
     }
   }
 
+  
   const pieChartData = {
     labels: investors.map(investor => investor.name),
     datasets: [
@@ -138,11 +145,10 @@ function App() {
         </button> 
       </div>
 
-      {/* Output section is only displayed if showOutput is true */}
       
         <div className="rightDiv card">
         <h2>Output</h2>
-
+        {/* Display the list of investors and their allocated amounts if there's more than one investor and our logic for show ouptut is true */}
         {showOutput && investors.length >0 && (
           <>
             {investors.map((investor) => (
